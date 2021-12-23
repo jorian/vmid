@@ -1,4 +1,6 @@
 use color_eyre::Report;
+use cursive::traits::*;
+use cursive::views::{Dialog, TextView};
 use tracing::info;
 use tracing_subscriber::EnvFilter;
 use vmid::menu;
@@ -13,7 +15,10 @@ fn main() {
 
     menu::new(&mut siv);
 
-    siv.set_user_data(vmid::Orderbook::new(vmid::Chain::VRSCTEST));
+    let orderbook = vmid::Orderbook::new(vmid::Chain::VRSCTEST);
+    siv.set_user_data(vmid::Data::new(orderbook));
+
+    siv.add_layer(Dialog::new().content(TextView::new("").with_name("chain_name")));
 
     siv.run();
 }

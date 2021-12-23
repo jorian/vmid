@@ -1,16 +1,18 @@
-use cursive::menu::MenuTree;
+use cursive::menu;
+use cursive::traits::*;
 use cursive::views::Dialog;
 use cursive::Cursive;
-use tracing::info;
+use strum::IntoEnumIterator; // 0.17.1
+use tracing::info; // 0.17.1
 
-use crate::{Chain, Orderbook};
+use crate::Chain;
 
 pub fn new(siv: &mut Cursive) {
     siv.menubar()
-        .add_subtree("File", MenuTree::new().leaf("Quit", |s| s.quit()))
+        .add_subtree("File", menu::MenuTree::new().leaf("Quit", |s| s.quit()))
         .add_subtree(
             "View",
-            MenuTree::new()
+            menu::MenuTree::new()
                 .leaf("All offers", |_| {})
                 .leaf("My offers", |_| {})
                 .leaf("Currency offers", |_| {})
@@ -18,23 +20,17 @@ pub fn new(siv: &mut Cursive) {
         )
         .add_subtree(
             "Select",
-            MenuTree::new()
-                .leaf("VRSC", |s| {
-                    s.with_user_data(|ob: &mut Orderbook| ob.chain = Chain::VRSC);
-                    info!("VRSC selected");
-                })
-                .leaf("VRSCTEST", |s| {
-                    s.with_user_data(|ob: &mut Orderbook| ob.chain = Chain::VRSCTEST);
-                    info!("VRSCTEST selected");
-                })
-                .leaf("mutt", |s| {
-                    s.with_user_data(|ob: &mut Orderbook| ob.chain = Chain::Mutt);
-                    info!("mutt selected");
-                }),
+            menu::MenuTree::new().with(|tree| {
+                for chain in Chain::iter() {
+                    tree.add_leaf(chain.to_string(), move |s| {
+                        set_active_chain(s, chain.clone())
+                    });
+                }
+            }),
         )
         .add_subtree(
             "New",
-            MenuTree::new()
+            menu::MenuTree::new()
                 .leaf("Offer", |_| {})
                 .leaf("Identity", |_| {})
                 .leaf("Donation", |_| {}),
@@ -46,4 +42,12 @@ pub fn new(siv: &mut Cursive) {
         .add_leaf("Help", |_| {});
 
     siv.set_autohide_menu(false);
+}
+
+fn set_active_chain(s: &mut Cursive, chain: Chain) {
+    info!("{} selected", &chain);
+    s.call_on_name("chain_name", |view: &mut cursive::views::TextView| {
+        view.set_content(&chain.to_string())
+    });
+    s.with_user_data(|data: &mut crate::Data| data.orderbook.chain = chain);
 }
