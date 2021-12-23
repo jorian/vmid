@@ -12,7 +12,15 @@ impl RpcClient {
     }
 }
 
+#[derive(Debug)]
 pub struct Order {
+    pub order_type: OrderType,
     pub name: String,
     pub price: f64,
+}
+
+#[derive(Debug)]
+pub enum OrderType {
+    Bid,
+    Ask,
 }

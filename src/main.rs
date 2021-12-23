@@ -31,27 +31,38 @@ fn main() {
                 offers
             });
 
+            let mut offercollection = vec![];
             if let Some(orderbook) = offers {
-                let mut offercollection = vec![];
                 for (_, offers) in orderbook {
-                    for offer in offers {
-                        offercollection.push(match offer.offer.offer {
-                            CurrencyOffer(mut map) => {
-                                let (name, price) =
-                                    map.drain().next().expect("a i-address and a price");
-                                vmid::rpc_client::Order { name, price }
+                    for marketplace_offer in offers {
+                        match marketplace_offer.offer.offer {
+                            IdentityOffer(id_offer) => {
+                                offercollection.push(vmid::rpc_client::Order {
+                                    order_type: vmid::rpc_client::OrderType::Ask,
+                                    name: id_offer.name,
+                                    price: marketplace_offer.price,
+                                })
                             }
-                            IdentityOffer(id_offer) => vmid::rpc_client::Order {
-                                name: id_offer.name,
-                                price: offer.price,
-                            },
-                        });
+                            _ => {}
+                        }
+                        match marketplace_offer.offer.accept {
+                            IdentityOffer(id_offer) => {
+                                offercollection.push(vmid::rpc_client::Order {
+                                    order_type: vmid::rpc_client::OrderType::Bid,
+                                    name: id_offer.name,
+                                    price: marketplace_offer.price,
+                                })
+                            }
+                            _ => {}
+                        };
                     }
                 }
             }
-            // s.add_layer(ScrollView::new().content(TextView::new(&format!("{:#?}", offers))))
+            s.pop_layer();
             s.add_layer(ScrollView::new(
-                Dialog::new().content(TextView::new(&format!("{:#?}", "test"))),
+                Dialog::new()
+                    .content(TextView::new(&format!("{:#?}", offercollection)))
+                    .button("Quit", |s| s.quit()),
             ))
         });
 
@@ -67,7 +78,7 @@ fn setup() -> Result<(), Report> {
     color_eyre::install()?;
 
     if std::env::var("RUST_LOG").is_err() {
-        std::env::set_var("RUST_LOG", "info")
+        std::env::set_var("RUST_LOG", "debug")
     }
     tracing_subscriber::fmt::fmt()
         .with_env_filter(EnvFilter::from_default_env())
