@@ -11,9 +11,9 @@ pub struct Data {
 }
 
 impl Data {
-    pub fn new(orderbook: Orderbook) -> Self {
+    pub fn new() -> Self {
         Data {
-            orderbook,
+            orderbook: Orderbook::new(Chain(String::from(""))),
             local_chains: util::find_local_chain_installations(),
         }
     }

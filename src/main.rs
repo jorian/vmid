@@ -5,9 +5,6 @@ use tracing::info;
 use tracing_subscriber::EnvFilter;
 use vmid::menu;
 
-// This example builds a simple TCP server with some parameters and some output.
-// It then builds a TUI to control the parameters and display the output.
-
 fn main() {
     setup().expect("set up of reporting");
     info!("setup succeeded");
@@ -15,8 +12,7 @@ fn main() {
 
     menu::new(&mut siv);
 
-    let orderbook = vmid::Orderbook::new(vmid::Chain(String::new()));
-    siv.set_user_data(vmid::Data::new(orderbook));
+    siv.set_user_data(vmid::Data::new());
 
     siv.add_layer(
         Dialog::new().content(TextView::new("<no chain selected>").with_name("chain_name")),
