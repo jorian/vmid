@@ -11,7 +11,7 @@ impl Data {
     pub fn new() -> Self {
         Data {
             orderbook: Orderbook::new(Chain(String::from(""))),
-            local_chains: super::util::find_local_chain_installations(),
+            local_chains: vec![],
             rpc_client: RpcClient::new(),
         }
     }

@@ -1,4 +1,4 @@
-use vrsc_rpc::{Auth, Client as VerusClient, RpcApi as VerusRpcApi};
+use vrsc_rpc::{Auth, Client as VerusClient};
 
 pub struct RpcClient {
     pub client: VerusClient,

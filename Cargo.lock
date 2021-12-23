@@ -1135,6 +1135,8 @@ dependencies = [
  "color-eyre",
  "cursive",
  "cursive_table_view",
+ "dirs",
+ "os_info",
  "rand",
  "tracing",
  "tracing-subscriber 0.3.3",
