@@ -1,6 +1,7 @@
 use cursive::menu::MenuTree;
 use cursive::views::Dialog;
 use cursive::Cursive;
+use tracing::info;
 
 use crate::{Chain, Orderbook};
 
@@ -19,22 +20,16 @@ pub fn new(siv: &mut Cursive) {
             "Select",
             MenuTree::new()
                 .leaf("VRSC", |s| {
-                    s.with_user_data(|ob: &mut Orderbook| {
-                        dbg!(&ob.chain);
-                        ob.chain = Chain::VRSC
-                    });
+                    s.with_user_data(|ob: &mut Orderbook| ob.chain = Chain::VRSC);
+                    info!("VRSC selected");
                 })
                 .leaf("VRSCTEST", |s| {
-                    s.with_user_data(|ob: &mut Orderbook| {
-                        dbg!(&ob.chain);
-                        ob.chain = Chain::VRSCTEST
-                    });
+                    s.with_user_data(|ob: &mut Orderbook| ob.chain = Chain::VRSCTEST);
+                    info!("VRSCTEST selected");
                 })
                 .leaf("mutt", |s| {
-                    s.with_user_data(|ob: &mut Orderbook| {
-                        dbg!(&ob.chain);
-                        ob.chain = Chain::Mutt
-                    });
+                    s.with_user_data(|ob: &mut Orderbook| ob.chain = Chain::Mutt);
+                    info!("mutt selected");
                 }),
         )
         .add_subtree(

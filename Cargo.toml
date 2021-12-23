@@ -16,3 +16,6 @@ path = "src/lib.rs"
 [dependencies]
 cursive = "0.16"
 rand = "0.8.4"
+color-eyre = "0.5.11"
+tracing = "0.1.26"
+tracing-subscriber = { version = "0.3", features = [ "env-filter" ] }
