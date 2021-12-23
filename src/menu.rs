@@ -2,14 +2,19 @@ use cursive::menu;
 use cursive::traits::*;
 use cursive::views::Dialog;
 use cursive::Cursive;
-use strum::IntoEnumIterator;
 use tracing::{error, info};
 
+use crate::util;
 use crate::Chain;
 
 pub fn new(siv: &mut Cursive) {
     siv.menubar()
-        .add_subtree("File", menu::MenuTree::new().leaf("Quit", |s| s.quit()))
+        .add_subtree(
+            "File",
+            menu::MenuTree::new()
+                .leaf("Quit", |s| s.quit())
+                .leaf("Help", |_| {}),
+        )
         .add_subtree(
             "View",
             menu::MenuTree::new()
@@ -21,10 +26,9 @@ pub fn new(siv: &mut Cursive) {
         .add_subtree(
             "Select",
             menu::MenuTree::new().with(|tree| {
-                for chain in Chain::iter() {
-                    tree.add_leaf(chain.to_string(), move |s| {
-                        set_active_chain(s, chain.clone())
-                    });
+                let active_chains = util::find_local_chain_installations();
+                for chain in active_chains {
+                    tree.add_leaf(chain.0.clone(), move |s| set_active_chain(s, chain.clone()));
                 }
             }),
         )
@@ -38,9 +42,7 @@ pub fn new(siv: &mut Cursive) {
         .add_delimiter()
         .add_leaf(format!("Search {}", '\u{1F50D}'), |s| {
             s.add_layer(Dialog::info("Search here"))
-        })
-        .add_leaf("Help", |_| {});
-
+        });
     siv.set_autohide_menu(false);
 }
 

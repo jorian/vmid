@@ -15,7 +15,7 @@ fn main() {
 
     menu::new(&mut siv);
 
-    let orderbook = vmid::Orderbook::new(vmid::Chain::VRSCTEST);
+    let orderbook = vmid::Orderbook::new(vmid::Chain(String::new()));
     siv.set_user_data(vmid::Data::new(orderbook));
 
     siv.add_layer(

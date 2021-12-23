@@ -1,16 +1,21 @@
 #[macro_use]
 pub mod menu;
+mod util;
+
 use std::fmt;
-use strum_macros::EnumIter;
 
 #[derive(Debug)]
 pub struct Data {
     pub orderbook: Orderbook,
+    pub local_chains: Vec<Chain>,
 }
 
 impl Data {
     pub fn new(orderbook: Orderbook) -> Self {
-        Data { orderbook }
+        Data {
+            orderbook,
+            local_chains: util::find_local_chain_installations(),
+        }
     }
 }
 
@@ -25,15 +30,11 @@ impl Orderbook {
     }
 }
 
-#[derive(Clone, Debug, EnumIter)]
-pub enum Chain {
-    VRSC,
-    VRSCTEST,
-    Mutt,
-}
+#[derive(Clone, Debug)]
+pub struct Chain(pub String);
 
 impl fmt::Display for Chain {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{:?}", self)
+        write!(f, "{}", self.0)
     }
 }
