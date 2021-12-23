@@ -2,8 +2,8 @@ use cursive::menu;
 use cursive::traits::*;
 use cursive::views::Dialog;
 use cursive::Cursive;
-use strum::IntoEnumIterator; // 0.17.1
-use tracing::info; // 0.17.1
+use strum::IntoEnumIterator;
+use tracing::info;
 
 use crate::Chain;
 
