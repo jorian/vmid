@@ -15,9 +15,9 @@ path = "src/lib.rs"
 
 [dependencies]
 cursive = "0.16"
+cursive_table_view = { git = "https://github.com/luryus/cursive_table_view", rev = "e995f16" }
 rand = "0.8.4"
 color-eyre = "0.5.11"
 tracing = "0.1.26"
 tracing-subscriber = { version = "0.3", features = [ "env-filter" ] }
-strum = "0.23"
-strum_macros = "0.23"
+vrsc-rpc = { path = "../rust-vrsc-rpc/client" }

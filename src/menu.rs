@@ -4,8 +4,8 @@ use cursive::views::Dialog;
 use cursive::Cursive;
 use tracing::{error, info};
 
+use crate::data::Chain;
 use crate::util;
-use crate::Chain;
 
 pub fn new(siv: &mut Cursive) {
     siv.menubar()
@@ -51,7 +51,7 @@ fn set_active_chain(s: &mut Cursive, chain: Chain) {
     s.call_on_name("chain_name", |view: &mut cursive::views::TextView| {
         view.set_content(&chain.to_string())
     });
-    if let None = s.with_user_data(|data: &mut crate::Data| data.orderbook.chain = chain) {
+    if let None = s.with_user_data(|data: &mut crate::data::Data| data.orderbook.chain = chain) {
         error!("user data was not updated, undefined behaviour");
         panic!("user_data not set");
     }

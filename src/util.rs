@@ -1,4 +1,4 @@
-use super::*;
+use super::data::*;
 
 // A non-failing function that finds all the installed chains: VRSC, VRSCTEST and the used PBaaS installations
 // (.komodo/VRSC, .komodo/VRSCTEST, .verustest/pbaas/* )

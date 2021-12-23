@@ -1,9 +1,11 @@
 use color_eyre::Report;
 use cursive::traits::*;
-use cursive::views::{Dialog, TextView};
-use tracing::info;
+use cursive::views::{Dialog, ScrollView, TextView};
+use tracing::*;
 use tracing_subscriber::EnvFilter;
 use vmid::menu;
+use vrsc_rpc::json::identity::OfferVariant::*;
+use vrsc_rpc::RpcApi;
 
 fn main() {
     setup().expect("set up of reporting");
@@ -12,11 +14,48 @@ fn main() {
 
     menu::new(&mut siv);
 
-    siv.set_user_data(vmid::Data::new());
+    siv.set_user_data(vmid::data::Data::new());
 
-    siv.add_layer(
-        Dialog::new().content(TextView::new("<no chain selected>").with_name("chain_name")),
-    );
+    let dialog = Dialog::new()
+        .content(TextView::new("Selected:"))
+        .content(TextView::new("<none>").with_name("chain_name"))
+        .button("fetch offers", |s| {
+            let offers = s.with_user_data(|data: &mut vmid::data::Data| {
+                let offers = data
+                    .rpc_client
+                    .client
+                    .get_offers(&data.orderbook.chain.0, true, false)
+                    .unwrap();
+                debug!("{:#?}", offers);
+
+                offers
+            });
+
+            if let Some(orderbook) = offers {
+                let mut offercollection = vec![];
+                for (_, offers) in orderbook {
+                    for offer in offers {
+                        offercollection.push(match offer.offer.offer {
+                            CurrencyOffer(mut map) => {
+                                let (name, price) =
+                                    map.drain().next().expect("a i-address and a price");
+                                vmid::rpc_client::Order { name, price }
+                            }
+                            IdentityOffer(id_offer) => vmid::rpc_client::Order {
+                                name: id_offer.name,
+                                price: offer.price,
+                            },
+                        });
+                    }
+                }
+            }
+            // s.add_layer(ScrollView::new().content(TextView::new(&format!("{:#?}", offers))))
+            s.add_layer(ScrollView::new(
+                Dialog::new().content(TextView::new(&format!("{:#?}", "test"))),
+            ))
+        });
+
+    siv.add_layer(dialog);
 
     siv.run();
 }
