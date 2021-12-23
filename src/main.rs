@@ -22,9 +22,10 @@ fn main() {
         .button("fetch offers", |s| {
             let offers = s.with_user_data(|data: &mut vmid::data::Data| {
                 let offers = data
+                    .active_chain
                     .rpc_client
                     .client
-                    .get_offers(&data.orderbook.chain.0, true, false)
+                    .get_offers(&data.active_chain.chain.0, true, false)
                     .unwrap();
                 debug!("{:#?}", offers);
 

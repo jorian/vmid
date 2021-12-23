@@ -52,7 +52,7 @@ fn set_active_chain(s: &mut Cursive, chain: Chain) {
         view.set_content(&chain.to_string())
     });
     if let None = s.with_user_data(|data: &mut crate::data::Data| {
-        data.orderbook.chain = chain.clone();
+        data.active_chain.chain = chain.clone();
         data.local_chains.push(chain)
     }) {
         error!("user data was not updated, undefined behaviour");

@@ -1,30 +1,34 @@
 use super::rpc_client::RpcClient;
 use std::fmt;
-
+use tracing::*;
 pub struct Data {
-    pub orderbook: Orderbook,
+    pub active_chain: ActiveChain,
     pub local_chains: Vec<Chain>,
-    pub rpc_client: RpcClient,
 }
 
 impl Data {
     pub fn new() -> Self {
         Data {
-            orderbook: Orderbook::new(Chain(String::from(""))),
+            active_chain: ActiveChain::new(Chain(String::from(""))),
             local_chains: vec![],
-            rpc_client: RpcClient::new(),
         }
     }
 }
 
-#[derive(Debug)]
-pub struct Orderbook {
+// #[derive(Debug)]
+pub struct ActiveChain {
     pub chain: Chain,
+    pub rpc_client: RpcClient,
 }
 
-impl Orderbook {
+impl ActiveChain {
     pub fn new(chain: Chain) -> Self {
-        Orderbook { chain }
+        let name = chain.clone();
+        debug!("{:?}", &name);
+        ActiveChain {
+            chain,
+            rpc_client: RpcClient::new(&name.0),
+        }
     }
 }
 
