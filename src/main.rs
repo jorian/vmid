@@ -18,7 +18,9 @@ fn main() {
     let orderbook = vmid::Orderbook::new(vmid::Chain::VRSCTEST);
     siv.set_user_data(vmid::Data::new(orderbook));
 
-    siv.add_layer(Dialog::new().content(TextView::new("").with_name("chain_name")));
+    siv.add_layer(
+        Dialog::new().content(TextView::new("<no chain selected>").with_name("chain_name")),
+    );
 
     siv.run();
 }

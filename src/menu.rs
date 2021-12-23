@@ -3,7 +3,7 @@ use cursive::traits::*;
 use cursive::views::Dialog;
 use cursive::Cursive;
 use strum::IntoEnumIterator;
-use tracing::info;
+use tracing::{error, info};
 
 use crate::Chain;
 
@@ -49,5 +49,8 @@ fn set_active_chain(s: &mut Cursive, chain: Chain) {
     s.call_on_name("chain_name", |view: &mut cursive::views::TextView| {
         view.set_content(&chain.to_string())
     });
-    s.with_user_data(|data: &mut crate::Data| data.orderbook.chain = chain);
+    if let None = s.with_user_data(|data: &mut crate::Data| data.orderbook.chain = chain) {
+        error!("user data was not updated, undefined behaviour");
+        panic!("user_data not set");
+    }
 }
