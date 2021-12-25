@@ -2,41 +2,36 @@ use super::rpc_client::RpcClient;
 use std::fmt;
 use tracing::*;
 pub struct Data {
-    pub active_chain: ActiveChain,
+    pub active_chain: Chain,
     pub local_chains: Vec<Chain>,
 }
 
 impl Data {
     pub fn new() -> Self {
+        let local_chains = crate::util::find_local_chain_installations();
         Data {
-            active_chain: ActiveChain::new(Chain(String::from(""))),
-            local_chains: vec![],
+            active_chain: Chain::new(""),
+            local_chains: crate::util::find_local_chain_installations(),
         }
     }
 }
 
-// #[derive(Debug)]
-pub struct ActiveChain {
-    pub chain: Chain,
+pub struct Chain {
+    pub name: String,
     pub rpc_client: RpcClient,
 }
 
-impl ActiveChain {
-    pub fn new(chain: Chain) -> Self {
-        let name = chain.clone();
-        debug!("{:?}", &name);
-        ActiveChain {
-            chain,
-            rpc_client: RpcClient::new(&name.0),
-        }
+impl Chain {
+    pub fn new<S: Into<String>>(chain: S) -> Self {
+        let name = chain.into();
+        let rpc_client = RpcClient::new(&name);
+        debug!("new Chain.{:?}", &name);
+        Chain { name, rpc_client }
     }
 }
 
-#[derive(Clone, Debug)]
-pub struct Chain(pub String);
-
 impl fmt::Display for Chain {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.0)
+        write!(f, "{}", self.name)
     }
 }

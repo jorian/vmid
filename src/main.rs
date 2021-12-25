@@ -25,7 +25,7 @@ fn main() {
                     .active_chain
                     .rpc_client
                     .client
-                    .get_offers(&data.active_chain.chain.0, true, false)
+                    .get_offers(&data.active_chain.name, true, false)
                     .unwrap();
                 debug!("{:#?}", offers);
 

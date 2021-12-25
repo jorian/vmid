@@ -28,7 +28,7 @@ pub(crate) fn find_local_chain_installations() -> Vec<Chain> {
         .exists()
         {
             debug!("a verus config has been found");
-            installations.push(Chain(String::from("VRSC")));
+            installations.push(Chain::new("VRSC"));
         }
 
         if Path::new(&format!(
@@ -38,7 +38,7 @@ pub(crate) fn find_local_chain_installations() -> Vec<Chain> {
         .exists()
         {
             debug!("a verustest config has been found");
-            installations.push(Chain(String::from("VRSCTEST")));
+            installations.push(Chain::new("VRSCTEST"));
         }
 
         let verustest_path = match os_info::get().os_type() {
@@ -62,7 +62,7 @@ pub(crate) fn find_local_chain_installations() -> Vec<Chain> {
                             {
                                 let pathbuf = PathBuf::from(&direntry.path());
 
-                                installations.push(Chain(format!(
+                                installations.push(Chain::new(format!(
                                     "{}",
                                     pathbuf
                                         .file_prefix()

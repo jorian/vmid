@@ -23,15 +23,7 @@ pub fn new(siv: &mut Cursive) {
                 .leaf("Currency offers", |_| {})
                 .leaf("Identity offers", |_| {}),
         )
-        .add_subtree(
-            "Select",
-            menu::MenuTree::new().with(|tree| {
-                let active_chains = util::find_local_chain_installations();
-                for chain in active_chains {
-                    tree.add_leaf(chain.0.clone(), move |s| set_active_chain(s, chain.clone()));
-                }
-            }),
-        )
+        .add_subtree("Select", menu::MenuTree::new())
         .add_subtree(
             "New",
             menu::MenuTree::new()
@@ -46,16 +38,16 @@ pub fn new(siv: &mut Cursive) {
     siv.set_autohide_menu(false);
 }
 
-fn set_active_chain(s: &mut Cursive, chain: Chain) {
-    info!("{} selected", &chain);
-    s.call_on_name("chain_name", |view: &mut cursive::views::TextView| {
-        view.set_content(&chain.to_string())
-    });
-    if let None = s.with_user_data(|data: &mut crate::data::Data| {
-        data.active_chain.chain = chain.clone();
-        data.local_chains.push(chain)
-    }) {
-        error!("user data was not updated, undefined behaviour");
-        panic!("user_data not set");
-    }
-}
+// fn set_active_chain(s: &mut Cursive, chain: Chain) {
+//     info!("{} selected", &chain);
+//     s.call_on_name("chain_name", |view: &mut cursive::views::TextView| {
+//         view.set_content(&chain.to_string())
+//     });
+//     if let None = s.with_user_data(|data: &mut crate::data::Data| {
+//         data.active_chain.chain = chain.clone();
+//         data.local_chains.push(chain)
+//     }) {
+//         error!("user data was not updated, undefined behaviour");
+//         panic!("user_data not set");
+//     }
+// }
