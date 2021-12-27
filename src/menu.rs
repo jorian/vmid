@@ -1,13 +1,29 @@
+use crate::data::Data;
 use cursive::menu;
 use cursive::traits::*;
 use cursive::views::Dialog;
 use cursive::Cursive;
-use tracing::{error, info};
+use tracing::info;
 
-use crate::data::Chain;
-use crate::util;
+use std::{cell::RefCell, rc::Rc};
 
-pub fn new(siv: &mut Cursive) {
+pub fn new(siv: &mut Cursive, data: Rc<RefCell<Data>>) {
+    let data_clone = Rc::clone(&data);
+
+    let menutree = cursive::menu::MenuTree::new().with(move |tree| {
+        for chain in data_clone.borrow().local_chains.iter() {
+            let chain = Rc::clone(chain);
+            let name = chain.borrow().name.clone();
+
+            tree.add_leaf(name, move |s| {
+                s.with_user_data(|data: &mut Rc<RefCell<Data>>| {
+                    data.borrow_mut().active_chain = chain.clone();
+                    info!("{:?}", &data.borrow().active_chain);
+                });
+            });
+        }
+    });
+
     siv.menubar()
         .add_subtree(
             "File",
@@ -23,7 +39,7 @@ pub fn new(siv: &mut Cursive) {
                 .leaf("Currency offers", |_| {})
                 .leaf("Identity offers", |_| {}),
         )
-        .add_subtree("Select", menu::MenuTree::new())
+        .add_subtree("Select", menutree)
         .add_subtree(
             "New",
             menu::MenuTree::new()

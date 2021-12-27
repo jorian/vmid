@@ -1,6 +1,7 @@
 use color_eyre::Report;
 use cursive::traits::*;
 use cursive::views::{Dialog, ScrollView, TextView};
+use std::{cell::RefCell, rc::Rc};
 use tracing::*;
 use tracing_subscriber::EnvFilter;
 use vmid::menu;
@@ -12,20 +13,24 @@ fn main() {
     info!("setup succeeded");
     let mut siv = cursive::default();
 
-    menu::new(&mut siv);
+    let data = Rc::new(RefCell::new(vmid::data::Data::new()));
+    menu::new(&mut siv, data.clone());
 
-    siv.set_user_data(vmid::data::Data::new());
+    siv.set_user_data(data.clone());
 
     let dialog = Dialog::new()
         .content(TextView::new("Selected:"))
         .content(TextView::new("<none>").with_name("chain_name"))
         .button("fetch offers", |s| {
-            let offers = s.with_user_data(|data: &mut vmid::data::Data| {
+            let offers = s.with_user_data(|data: &mut Rc<RefCell<vmid::data::Data>>| {
+                debug!("{:?}", data.borrow().active_chain);
                 let offers = data
+                    .borrow()
                     .active_chain
+                    .borrow()
                     .rpc_client
                     .client
-                    .get_offers(&data.active_chain.name, true, false)
+                    .get_offers(&data.borrow().active_chain.borrow().name, true, false)
                     .unwrap();
                 debug!("{:#?}", offers);
 

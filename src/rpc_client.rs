@@ -7,9 +7,11 @@ pub struct RpcClient {
 
 impl RpcClient {
     pub fn new(name: &str) -> Self {
-        debug!("{:?}", name);
-        RpcClient {
-            client: VerusClient::chain(name, Auth::ConfigFile).expect("a client"),
+        debug!("{:?}", &name);
+        if let Ok(client) = VerusClient::chain(name, Auth::ConfigFile) {
+            RpcClient { client }
+        } else {
+            panic!("no client could be made")
         }
     }
 }

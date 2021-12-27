@@ -1,12 +1,14 @@
 use super::data::Chain;
 
 use os_info::Type as OSType;
+use std::cell::RefCell;
 use std::path::{Path, PathBuf};
+use std::rc::Rc;
 
 use tracing::*;
 // A non-failing function that finds all the installed chains: VRSC, VRSCTEST and the used PBaaS installations
 // (.komodo/VRSC, .komodo/VRSCTEST, .verustest/pbaas/* )
-pub(crate) fn find_local_chain_installations() -> Vec<Chain> {
+pub(crate) fn find_local_chain_installations() -> Rc<Vec<Rc<RefCell<Chain>>>> {
     let mut installations = vec![];
 
     if let Some(homedir) = dirs::home_dir() {
@@ -28,7 +30,7 @@ pub(crate) fn find_local_chain_installations() -> Vec<Chain> {
         .exists()
         {
             debug!("a verus config has been found");
-            installations.push(Chain::new("VRSC"));
+            installations.push(Rc::new(RefCell::new(Chain::new("VRSC"))));
         }
 
         if Path::new(&format!(
@@ -38,7 +40,7 @@ pub(crate) fn find_local_chain_installations() -> Vec<Chain> {
         .exists()
         {
             debug!("a verustest config has been found");
-            installations.push(Chain::new("VRSCTEST"));
+            installations.push(Rc::new(RefCell::new(Chain::new("vrsctest"))));
         }
 
         let verustest_path = match os_info::get().os_type() {
@@ -62,7 +64,7 @@ pub(crate) fn find_local_chain_installations() -> Vec<Chain> {
                             {
                                 let pathbuf = PathBuf::from(&direntry.path());
 
-                                installations.push(Chain::new(format!(
+                                installations.push(Rc::new(RefCell::new(Chain::new(format!(
                                     "{}",
                                     pathbuf
                                         .file_prefix()
@@ -70,7 +72,7 @@ pub(crate) fn find_local_chain_installations() -> Vec<Chain> {
                                         .to_owned()
                                         .into_string()
                                         .unwrap()
-                                )));
+                                )))));
                             }
                         }
                     }
@@ -81,5 +83,5 @@ pub(crate) fn find_local_chain_installations() -> Vec<Chain> {
         panic!("unsupported OS (no home directory found)");
     };
 
-    installations
+    Rc::new(installations)
 }
