@@ -1,4 +1,3 @@
-use tracing::*;
 use vrsc_rpc::{Auth, Client as VerusClient};
 
 pub struct RpcClient {
@@ -7,7 +6,6 @@ pub struct RpcClient {
 
 impl RpcClient {
     pub fn new(name: &str) -> Self {
-        debug!("{:?}", &name);
         if let Ok(client) = VerusClient::chain(name, Auth::ConfigFile) {
             RpcClient { client }
         } else {

@@ -17,7 +17,7 @@ pub(crate) fn find_local_chain_installations() -> Arc<Vec<Arc<Chain>>> {
                 PathBuf::from(&format!("{}/.komodo", &homedir.to_str().unwrap()))
             }
             OSType::Macos | OSType::Windows => {
-                PathBuf::from(&format!("{}/Komodo", homedir.to_str().unwrap()))
+                PathBuf::from(&format!("{}/Komodo", &homedir.to_str().unwrap()))
             }
             _ => panic!("unsupported OS"),
         };
@@ -28,7 +28,7 @@ pub(crate) fn find_local_chain_installations() -> Arc<Vec<Arc<Chain>>> {
         ))
         .exists()
         {
-            debug!("a verus config has been found");
+            debug!("VRSC config has been found");
             installations.push(Arc::new(Chain::new("VRSC")));
         }
 
@@ -38,7 +38,7 @@ pub(crate) fn find_local_chain_installations() -> Arc<Vec<Arc<Chain>>> {
         ))
         .exists()
         {
-            debug!("a verustest config has been found");
+            debug!("verustest config has been found");
             installations.push(Arc::new(Chain::new("vrsctest")));
         }
 
@@ -52,26 +52,36 @@ pub(crate) fn find_local_chain_installations() -> Arc<Vec<Arc<Chain>>> {
             _ => panic!("unsupported OS"),
         };
 
-        for entry in verustest_path.read_dir().expect("a read dir") {
+        // traverse the pbaas directory and find installed pbaas chains.
+        // TODO: there could be old VRSCTEST installations! users should always empty .verustest so panic should be fine.
+        for entry in verustest_path.read_dir().expect("a dir") {
             if let Ok(entry) = entry {
                 if let Ok(pbaasentry) = PathBuf::from(&entry.path()).read_dir() {
                     for i in pbaasentry.into_iter() {
                         if let Ok(direntry) = i {
-                            if direntry.file_name().to_str().unwrap()
-                                == format!("{}.conf", &entry.file_name().into_string().unwrap())
-                                    .as_str()
-                            {
-                                let pathbuf = PathBuf::from(&direntry.path());
+                            match direntry.file_name().to_str() {
+                                Some(filename) => {
+                                    if filename
+                                        == format!(
+                                            "{}.conf",
+                                            &entry.file_name().into_string().unwrap()
+                                        )
+                                        .as_str()
+                                    {
+                                        let pathbuf = PathBuf::from(&direntry.path());
 
-                                installations.push(Arc::new(Chain::new(format!(
-                                    "{}",
-                                    pathbuf
-                                        .file_prefix()
-                                        .unwrap()
-                                        .to_owned()
-                                        .into_string()
-                                        .unwrap()
-                                ))));
+                                        installations.push(Arc::new(Chain::new(format!(
+                                            "{}",
+                                            pathbuf
+                                                .file_prefix()
+                                                .unwrap()
+                                                .to_owned()
+                                                .into_string()
+                                                .unwrap()
+                                        ))));
+                                    }
+                                }
+                                None => {} //invalid (non-ascii) filenames will never be chains in verus
                             }
                         }
                     }

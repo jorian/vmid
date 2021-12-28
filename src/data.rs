@@ -1,8 +1,5 @@
 use super::rpc_client::RpcClient;
-use std::{
-    fmt,
-    sync::Arc
-};
+use std::{fmt, sync::Arc};
 use tracing::*;
 pub struct Data {
     pub active_chain: Arc<Chain>,
@@ -43,8 +40,8 @@ impl fmt::Display for Chain {
     }
 }
 
-impl std::fmt::Debug for Chain {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl fmt::Debug for Chain {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Chain").field("name", &self.name).finish()
     }
 }
