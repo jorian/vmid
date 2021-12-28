@@ -13,7 +13,7 @@ fn main() {
 
     siv.set_user_data(data.clone());
 
-    siv.add_layer(offers::new());
+    siv.add_layer(offers::new(data.lock().unwrap().active_chain.name.clone()));
 
     siv.run();
 }

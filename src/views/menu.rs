@@ -1,7 +1,7 @@
 use crate::UserData;
 use cursive::menu::MenuTree;
 use cursive::traits::*;
-use cursive::views::Dialog;
+use cursive::views::{Dialog, LinearLayout, Panel, ResizedView};
 use cursive::Cursive;
 use std::sync::Arc;
 use tracing::debug;
@@ -44,7 +44,13 @@ fn select_tree(data_clone: UserData) -> MenuTree {
             let chain = Arc::clone(chain);
             let name = chain.name.clone();
 
-            tree.add_leaf(name, move |s| {
+            tree.add_leaf(name.clone(), move |s| {
+                s.call_on_name(
+                    "orderbook_panel",
+                    |view: &mut Panel<ResizedView<LinearLayout>>| {
+                        view.set_title(&name.clone());
+                    },
+                );
                 s.with_user_data(|data: &mut UserData| {
                     data.lock().unwrap().active_chain = chain.clone();
                     debug!("new active_chain: {:?}", &data.lock().unwrap().active_chain);

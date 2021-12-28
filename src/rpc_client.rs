@@ -21,7 +21,7 @@ pub struct Order {
     pub price: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum OrderType {
     Bid,
     Ask,
