@@ -2,7 +2,6 @@ use color_eyre::Report;
 use cursive::views::{Dialog, ScrollView, TextView};
 use cursive::{traits::*, Cursive};
 use std::sync::{Arc, Mutex};
-use std::time::Duration;
 use tracing::*;
 use tracing_subscriber::EnvFilter;
 use vmid::menu;
@@ -51,9 +50,8 @@ fn fetch_offers(s: &mut Cursive) {
     let data = Arc::clone(&s.user_data::<UserData>().unwrap());
     debug!("orders being fetched");
     std::thread::spawn(move || {
-        debug!("thread started");
+        debug!("order fetch thread started");
         let offers = {
-            debug!("fetch some orders");
             let name = data
                 .lock()
                 .unwrap()
@@ -62,7 +60,7 @@ fn fetch_offers(s: &mut Cursive) {
                 .unwrap()
                 .name
                 .clone();
-            debug!("{}", &name);
+            debug!("orders to fetch for: {}", &name);
             data.lock()
                 .unwrap()
                 .active_chain
@@ -97,7 +95,6 @@ fn fetch_offers(s: &mut Cursive) {
                 }
             }
         }
-        std::thread::sleep(Duration::from_secs(5));
         cb_sink
             .send(Box::new(move |s: &mut Cursive| {
                 s.pop_layer();

@@ -1,9 +1,7 @@
 use super::data::Chain;
 
 use os_info::Type as OSType;
-use std::cell::RefCell;
 use std::path::{Path, PathBuf};
-use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 
 use tracing::*;
