@@ -1,9 +1,9 @@
 use super::rpc_client::RpcClient;
-use std::{cell::RefCell, fmt, rc::Rc};
+use std::{sync::{Arc, Mutex}, fmt};
 use tracing::*;
 pub struct Data {
-    pub active_chain: Rc<RefCell<Chain>>,
-    pub local_chains: Rc<Vec<Rc<RefCell<Chain>>>>,
+    pub active_chain: Arc<Mutex<Chain>>,
+    pub local_chains: Arc<Vec<Arc<Mutex<Chain>>>>,
 }
 
 impl Data {
@@ -11,7 +11,7 @@ impl Data {
         let local_chains = crate::util::find_local_chain_installations();
         if let Some(first) = local_chains.first() {
             Data {
-                active_chain: Rc::clone(first),
+                active_chain: Arc::clone(first),
                 local_chains: local_chains,
             }
         } else {

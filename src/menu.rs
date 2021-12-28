@@ -4,21 +4,20 @@ use cursive::traits::*;
 use cursive::views::Dialog;
 use cursive::Cursive;
 use tracing::info;
+use std::sync::{Arc, Mutex};
 
-use std::{cell::RefCell, rc::Rc};
-
-pub fn new(siv: &mut Cursive, data: Rc<RefCell<Data>>) {
-    let data_clone = Rc::clone(&data);
+pub fn new(siv: &mut Cursive, data: Arc<Mutex<Data>>) {
+    let data_clone = Arc::clone(&data);
 
     let menutree = cursive::menu::MenuTree::new().with(move |tree| {
-        for chain in data_clone.borrow().local_chains.iter() {
-            let chain = Rc::clone(chain);
-            let name = chain.borrow().name.clone();
+        for chain in data_clone.lock().unwrap().local_chains.iter() {
+            let chain = Arc::clone(chain);
+            let name = chain.lock().unwrap().name.clone();
 
             tree.add_leaf(name, move |s| {
-                s.with_user_data(|data: &mut Rc<RefCell<Data>>| {
-                    data.borrow_mut().active_chain = chain.clone();
-                    info!("{:?}", &data.borrow().active_chain);
+                s.with_user_data(|data: &mut Arc<Mutex<Data>>| {
+                    data.lock().unwrap().active_chain = chain.clone();
+                    info!("{:?}", &data.lock().unwrap().active_chain);
                 });
             });
         }
