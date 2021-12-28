@@ -52,20 +52,11 @@ fn fetch_offers(s: &mut Cursive) {
     std::thread::spawn(move || {
         debug!("order fetch thread started");
         let offers = {
-            let name = data
-                .lock()
-                .unwrap()
-                .active_chain
-                .lock()
-                .unwrap()
-                .name
-                .clone();
+            let name = data.lock().unwrap().active_chain.name.clone();
             debug!("orders to fetch for: {}", &name);
             data.lock()
                 .unwrap()
                 .active_chain
-                .lock()
-                .unwrap()
                 .rpc_client
                 .client
                 .get_offers(&name, true, false)

@@ -2,12 +2,12 @@ use super::data::Chain;
 
 use os_info::Type as OSType;
 use std::path::{Path, PathBuf};
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 use tracing::*;
-// A non-failing function that finds all the installed chains: VRSC, VRSCTEST and the used PBaaS installations
+// A function that finds all the installed chains: VRSC, VRSCTEST and the used PBaaS installations
 // (.komodo/VRSC, .komodo/VRSCTEST, .verustest/pbaas/* )
-pub(crate) fn find_local_chain_installations() -> Arc<Vec<Arc<Mutex<Chain>>>> {
+pub(crate) fn find_local_chain_installations() -> Arc<Vec<Arc<Chain>>> {
     let mut installations = vec![];
 
     if let Some(homedir) = dirs::home_dir() {
@@ -29,7 +29,7 @@ pub(crate) fn find_local_chain_installations() -> Arc<Vec<Arc<Mutex<Chain>>>> {
         .exists()
         {
             debug!("a verus config has been found");
-            installations.push(Arc::new(Mutex::new(Chain::new("VRSC"))));
+            installations.push(Arc::new(Chain::new("VRSC")));
         }
 
         if Path::new(&format!(
@@ -39,7 +39,7 @@ pub(crate) fn find_local_chain_installations() -> Arc<Vec<Arc<Mutex<Chain>>>> {
         .exists()
         {
             debug!("a verustest config has been found");
-            installations.push(Arc::new(Mutex::new(Chain::new("vrsctest"))));
+            installations.push(Arc::new(Chain::new("vrsctest")));
         }
 
         let verustest_path = match os_info::get().os_type() {
@@ -63,7 +63,7 @@ pub(crate) fn find_local_chain_installations() -> Arc<Vec<Arc<Mutex<Chain>>>> {
                             {
                                 let pathbuf = PathBuf::from(&direntry.path());
 
-                                installations.push(Arc::new(Mutex::new(Chain::new(format!(
+                                installations.push(Arc::new(Chain::new(format!(
                                     "{}",
                                     pathbuf
                                         .file_prefix()
@@ -71,7 +71,7 @@ pub(crate) fn find_local_chain_installations() -> Arc<Vec<Arc<Mutex<Chain>>>> {
                                         .to_owned()
                                         .into_string()
                                         .unwrap()
-                                )))));
+                                ))));
                             }
                         }
                     }

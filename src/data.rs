@@ -1,9 +1,12 @@
 use super::rpc_client::RpcClient;
-use std::{sync::{Arc, Mutex}, fmt};
+use std::{
+    fmt,
+    sync::Arc
+};
 use tracing::*;
 pub struct Data {
-    pub active_chain: Arc<Mutex<Chain>>,
-    pub local_chains: Arc<Vec<Arc<Mutex<Chain>>>>,
+    pub active_chain: Arc<Chain>,
+    pub local_chains: Arc<Vec<Arc<Chain>>>,
 }
 
 impl Data {
