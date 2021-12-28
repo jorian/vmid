@@ -1,5 +1,4 @@
-use super::data::Chain;
-
+use crate::data::Chain;
 use os_info::Type as OSType;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;

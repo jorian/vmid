@@ -1,4 +1,4 @@
-use super::rpc_client::RpcClient;
+use crate::rpc_client::RpcClient;
 use std::{fmt, sync::Arc};
 use tracing::*;
 pub struct Data {
