@@ -57,6 +57,7 @@ struct OfferRow {
     name: String,
     price: f64,
     txid: String,
+    expiry: u64,
 }
 
 enum OfferType {
@@ -107,13 +108,25 @@ fn create_table(offer_type: OfferType) -> NamedView<TableView<OfferRow, OffersCo
                     },
                 );
 
+                let active_chain = siv
+                    .user_data::<UserData>()
+                    .unwrap()
+                    .lock()
+                    .unwrap()
+                    .active_chain
+                    .clone();
+
+                let block_height = active_chain.rpc_client.client.get_block_count().unwrap();
+
                 if let Some(item) = item {
                     siv.add_layer(
                         Dialog::new()
                             .content(TextView::new(format!(
-                                "txid: {}\nprice: {}",
+                                "txid: {}\nprice: {} {}\nexpires in {} blocks",
                                 item.txid.clone(),
-                                item.price
+                                item.price,
+                                active_chain.name,
+                                item.expiry - block_height as u64
                             )))
                             .button("close", |s| {
                                 s.pop_layer();
@@ -188,6 +201,7 @@ fn fetch_offers(s: &mut Cursive) {
                                 name: item.name.clone(),
                                 price: item.price,
                                 txid: item.txid.clone(),
+                                expiry: item.expiry,
                             })
                             .collect::<Vec<OfferRow>>();
                         table.sort_by(|a, b| a.name.cmp(&b.name));
@@ -207,6 +221,7 @@ fn fetch_offers(s: &mut Cursive) {
                                 name: item.name.clone(),
                                 price: item.price,
                                 txid: item.txid.clone(),
+                                expiry: item.expiry,
                             })
                             .collect::<Vec<OfferRow>>();
                         table.sort_by(|a, b| a.name.cmp(&b.name));
