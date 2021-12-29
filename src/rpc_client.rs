@@ -19,6 +19,7 @@ pub struct Order {
     pub order_type: OrderType,
     pub name: String,
     pub price: f64,
+    pub txid: String,
 }
 
 #[derive(Debug, Eq, PartialEq)]

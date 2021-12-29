@@ -3,13 +3,13 @@ use cursive::{
     align::HAlign,
     traits::*,
     view::IntoBoxedView,
-    views::{Button, LinearLayout, NamedView, Panel, TextView},
+    views::{Button, Dialog, LinearLayout, NamedView, Panel, TextView},
     Cursive, View,
 };
 use cursive_aligned_view::Alignable;
 use cursive_table_view::{TableView, TableViewItem};
 use std::{cmp::Ordering, sync::Arc};
-use tracing::debug;
+use tracing::*;
 use vrsc_rpc::json::identity::OfferVariant::*;
 use vrsc_rpc::RpcApi;
 
@@ -56,6 +56,7 @@ enum OffersColumn {
 struct OfferRow {
     name: String,
     price: f64,
+    txid: String,
 }
 
 enum OfferType {
@@ -83,19 +84,50 @@ impl TableViewItem<OffersColumn> for OfferRow {
 }
 
 fn create_table(offer_type: OfferType) -> NamedView<TableView<OfferRow, OffersColumn>> {
-    fn internal_table() -> TableView<OfferRow, OffersColumn> {
-        TableView::<OfferRow, OffersColumn>::new()
+    fn internal_table<S: Into<String>>(
+        table_name: S,
+    ) -> NamedView<TableView<OfferRow, OffersColumn>> {
+        let table_view = TableView::<OfferRow, OffersColumn>::new()
             .column(OffersColumn::Name, "Name", |c| c.width_percent(50))
             .column(OffersColumn::Price, "Price", |c| {
                 c.ordering(Ordering::Greater)
                     .align(HAlign::Right)
                     .width_percent(50)
+            });
+
+        let table_name = table_name.into();
+        let table_name_c = table_name.clone();
+
+        table_view
+            .on_submit(move |siv, _row, index| {
+                let item = siv.call_on_name(
+                    &table_name_c,
+                    |table_view: &mut TableView<OfferRow, OffersColumn>| {
+                        table_view.borrow_item(index).unwrap().clone()
+                    },
+                );
+
+                if let Some(item) = item {
+                    siv.add_layer(
+                        Dialog::new()
+                            .content(TextView::new(format!(
+                                "txid: {}\nprice: {}",
+                                item.txid.clone(),
+                                item.price
+                            )))
+                            .button("close", |s| {
+                                s.pop_layer();
+                            })
+                            .button("take offer", |_| {}),
+                    )
+                };
             })
+            .with_name(&table_name)
     }
 
     match offer_type {
-        OfferType::Ask => return internal_table().with_name("asks"),
-        OfferType::Bid => return internal_table().with_name("bids"),
+        OfferType::Ask => return internal_table("asks"),
+        OfferType::Bid => return internal_table("bids"),
     }
 }
 
@@ -126,6 +158,7 @@ fn fetch_offers(s: &mut Cursive) {
                             order_type: crate::rpc_client::OrderType::Ask,
                             name: id_offer.name,
                             price: marketplace_offer.price,
+                            txid: marketplace_offer.offer.txid.to_string(),
                         }),
                         _ => {}
                     }
@@ -134,6 +167,7 @@ fn fetch_offers(s: &mut Cursive) {
                             order_type: crate::rpc_client::OrderType::Bid,
                             name: id_offer.name,
                             price: marketplace_offer.price,
+                            txid: marketplace_offer.offer.txid.to_string(),
                         }),
                         _ => {}
                     };
@@ -151,6 +185,7 @@ fn fetch_offers(s: &mut Cursive) {
                             .map(|item| OfferRow {
                                 name: item.name.clone(),
                                 price: item.price,
+                                txid: item.txid.clone(),
                             })
                             .collect::<Vec<OfferRow>>();
                         table.sort_by(|a, b| a.name.cmp(&b.name));
@@ -169,6 +204,7 @@ fn fetch_offers(s: &mut Cursive) {
                             .map(|item| OfferRow {
                                 name: item.name.clone(),
                                 price: item.price,
+                                txid: item.txid.clone(),
                             })
                             .collect::<Vec<OfferRow>>();
                         table.sort_by(|a, b| a.name.cmp(&b.name));
