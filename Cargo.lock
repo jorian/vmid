@@ -1139,7 +1139,7 @@ checksum = "5fecdca9a5291cc2b8dcf7dc02453fee791a280f3743cb0905f8822ae463b3fe"
 
 [[package]]
 name = "vmid"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "color-eyre",
  "cursive",
@@ -1155,7 +1155,9 @@ dependencies = [
 
 [[package]]
 name = "vrsc"
-version = "0.1.0"
+version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "55f86106343a5eec81e667a9b1c2a5aef4bb768956d46b40654d3f6b4a8ae6fc"
 dependencies = [
  "bitcoin 0.26.2",
  "bitcoin_hashes 0.10.0",
@@ -1166,6 +1168,8 @@ dependencies = [
 [[package]]
 name = "vrsc-rpc"
 version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "471d1105aff50de41940413f4acd7208b8b046fb3a1fa00b93ec1bca3b0f29c0"
 dependencies = [
  "dirs",
  "jsonrpc",
@@ -1178,6 +1182,8 @@ dependencies = [
 [[package]]
 name = "vrsc-rpc-json"
 version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ddb69e1eedcaa647e445b3eddb102dcb66ac64e57fa40a9d4675783a0bf6e48"
 dependencies = [
  "bitcoin 0.27.1",
  "hex",

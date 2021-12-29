@@ -1,7 +1,9 @@
 [package]
 name = "vmid"
-version = "0.1.0"
+description = "Verus Marketplace for IDs"
+version = "0.0.1"
 edition = "2021"
+author = ["jorian"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -21,6 +23,7 @@ rand = "0.8.4"
 color-eyre = "0.5.11"
 tracing = "0.1.26"
 tracing-subscriber = { version = "0.3", features = [ "env-filter" ] }
-vrsc-rpc = { path = "../rust-vrsc-rpc/client" }
+# vrsc-rpc = { path = "../rust-vrsc-rpc/client" }
+vrsc-rpc = "0.0.1"
 dirs = "4.0"
 os_info = "3.0"
