@@ -20,6 +20,7 @@ pub struct Order {
     pub name: String,
     pub price: f64,
     pub txid: String,
+    pub expiry: u64,
 }
 
 #[derive(Debug, Eq, PartialEq)]

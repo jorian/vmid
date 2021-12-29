@@ -159,6 +159,7 @@ fn fetch_offers(s: &mut Cursive) {
                             name: id_offer.name,
                             price: marketplace_offer.price,
                             txid: marketplace_offer.offer.txid.to_string(),
+                            expiry: marketplace_offer.offer.blockexpiry,
                         }),
                         _ => {}
                     }
@@ -168,6 +169,7 @@ fn fetch_offers(s: &mut Cursive) {
                             name: id_offer.name,
                             price: marketplace_offer.price,
                             txid: marketplace_offer.offer.txid.to_string(),
+                            expiry: marketplace_offer.offer.blockexpiry,
                         }),
                         _ => {}
                     };
