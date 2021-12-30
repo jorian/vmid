@@ -2,11 +2,11 @@ use crate::data::Chain;
 use os_info::Type as OSType;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
-
 use tracing::*;
+
 // A function that finds all the installed chains: VRSC, VRSCTEST and the used PBaaS installations
 // (.komodo/VRSC, .komodo/VRSCTEST, .verustest/pbaas/* )
-pub(crate) fn find_local_chain_installations() -> Arc<Vec<Arc<Chain>>> {
+pub(crate) fn find_local_chain_installations() -> Vec<Arc<Chain>> {
     let mut installations = vec![];
 
     if let Some(homedir) = dirs::home_dir() {
@@ -91,5 +91,5 @@ pub(crate) fn find_local_chain_installations() -> Arc<Vec<Arc<Chain>>> {
         panic!("unsupported OS (no home directory found)");
     };
 
-    Arc::new(installations)
+    installations
 }

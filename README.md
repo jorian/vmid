@@ -1,4 +1,4 @@
-# VMID
+# Verus Marketplace for IDs
 
 A simple TUI that shows the current orderbook of the selected (locally installed) currency.
 
@@ -18,13 +18,14 @@ If you see weird characters, make sure to have the `LANG` environment variable s
 
 Coming soon...
 
-### Todo
+### Todo (0.1.0)
 
 - [ ] show info on individual offers
 - [ ] support id <-> id orders
 - [ ] support currency orders
+- [ ] support showing local (wallet) identities that you own
 
-### Wishlist
+### Wishlist (0.2+)
 
 - [ ] actual trade
 - [ ] create new offer

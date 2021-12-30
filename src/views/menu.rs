@@ -7,7 +7,6 @@ use std::sync::Arc;
 use tracing::debug;
 
 pub fn new(siv: &mut Cursive, data: UserData) {
-    let data_clone = Arc::clone(&data);
     siv.menubar()
         .add_subtree(
             "File",
@@ -23,7 +22,7 @@ pub fn new(siv: &mut Cursive, data: UserData) {
                 .leaf("Currency offers", |_| {})
                 .leaf("Identity offers", |_| {}),
         )
-        .add_subtree("Select", select_tree(Arc::clone(&data_clone)))
+        .add_subtree("Select", new_select_tree(Arc::clone(&data)))
         .add_subtree(
             "New",
             MenuTree::new()
@@ -38,9 +37,9 @@ pub fn new(siv: &mut Cursive, data: UserData) {
     siv.set_autohide_menu(false);
 }
 
-fn select_tree(data_clone: UserData) -> MenuTree {
+fn new_select_tree(data: UserData) -> MenuTree {
     MenuTree::new().with(move |tree| {
-        for chain in data_clone.lock().unwrap().local_chains.iter() {
+        for chain in data.lock().unwrap().local_chains.iter() {
             let chain = Arc::clone(chain);
             let name = chain.name.clone();
 

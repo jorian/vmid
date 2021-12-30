@@ -1,6 +1,13 @@
 use crate::rpc_client::RpcClient;
 use std::{fmt, sync::Arc};
 use tracing::*;
+
+// The shared data struct that is owned by the Cursive instance.
+// Why is local_chains an Arc<Vec<Arc<Chain>>>?
+// Atomic because of threads; threads are used when data is fetched from RPC client
+// I also have to move certain things into closures; menu items have callbacks which need
+// to be run when one is clicked.
+
 pub struct Data {
     pub active_chain: Arc<Chain>,
     pub local_chains: Arc<Vec<Arc<Chain>>>,
@@ -12,7 +19,7 @@ impl Data {
         if let Some(first) = local_chains.first() {
             Data {
                 active_chain: Arc::clone(first),
-                local_chains: local_chains,
+                local_chains: Arc::new(local_chains),
             }
         } else {
             panic!("no installations found")
